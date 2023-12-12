@@ -17,13 +17,15 @@ const verifyToken = (req, res, next) => {
 
 const verifyTokenAuth = (req, res, next) => {
   verifyToken(req, res, () => {
-    if (req.user.id === req.params.id || req.user.isAdmin) {
+    if (req.user.id === req.params.userId || req.user.isAdmin) {
+      console.log("true")
       next();
     } else {
       res.status(403).json("your are not allowed to do that");
     }
   });
 };
+
 const verifyTokenAndAdmin = (req, res, next) => {
   verifyToken(req, res, () => {
     if (req.user.isAdmin) {
