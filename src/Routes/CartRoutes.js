@@ -40,7 +40,7 @@ cartRoute.put("/:id", verifyTokenAuth, async (req, res) => {
 
 // DELETE
 
-cartRoute.delete("/:id", verifyTokenAuth, async (req, res) => {
+cartRoute.delete("/delete/:id", verifyTokenAuth, async (req, res) => {
   try {
     const deletedCart = await Cart.findOneAndDelete({ _id: req.body.productId });
     
