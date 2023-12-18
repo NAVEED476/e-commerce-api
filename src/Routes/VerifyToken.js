@@ -1,5 +1,5 @@
 const jwt = require("jsonwebtoken");
-const User = require("../Models/userSchema")
+const User = require("../Models/userSchema");
 
 const verifyToken = (req, res, next) => {
   const authHeader = req.headers.token;
@@ -17,8 +17,12 @@ const verifyToken = (req, res, next) => {
 
 const verifyTokenAuth = (req, res, next) => {
   verifyToken(req, res, () => {
-    if (req.user.id === req.params.userId || req.user.isAdmin) {
-      console.log("true")
+    if (
+      req.user.id === req.params.userId ||
+      req.user.id === req.params.id ||
+      req.user.isAdmin
+    ) {
+      console.log("true");
       next();
     } else {
       res.status(403).json("your are not allowed to do that");

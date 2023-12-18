@@ -8,19 +8,8 @@ const cartRoute = require("express").Router();
 
 // CREATE
 
-// cartRoute.post("/", verifyToken, async (req, res) => {
-//   const newCart = new Cart(req.body);
-//   try {
-//     const cartProduct = await newCart.save();
-//     res.status(200).json(cartProduct);
-//   } catch (err) {
-//     res.status(500).json(err);
-//   }
-// });
-
-
 cartRoute.post("/", verifyToken, async (req, res) => {
-  const { userId, products } = req.body;
+  const { userId, ...products } = req.body;
   const newCart = new Cart({ userId, products });
 
   try {
@@ -31,12 +20,13 @@ cartRoute.post("/", verifyToken, async (req, res) => {
   }
 });
 
+
 // UPDATE
 
 cartRoute.put("/:id", verifyTokenAuth, async (req, res) => {
   try {
     const updatedCart = await Cart.findByIdAndUpdate(
-      req.params.id,
+      { id: req.params.id },
       {
         $set: req.body,
       },
@@ -52,22 +42,29 @@ cartRoute.put("/:id", verifyTokenAuth, async (req, res) => {
 
 cartRoute.delete("/:id", verifyTokenAuth, async (req, res) => {
   try {
-    await Cart.findByIdAndDelete(req.params.id);
-    res.status(200).json("product has been deleted");
+    const deletedCart = await Cart.findOneAndDelete({ _id: req.body.productId });
+    
+    if (deletedCart) {
+      res.status(200).json("Product has been deleted");
+    } else {
+      res.status(404).json("Product not found");
+    }
   } catch (err) {
     res.status(500).json(err);
   }
 });
 
+
+
 // GET specific user cart itmes
 
 cartRoute.get("/find/:userId", verifyTokenAuth, async (req, res) => {
-  console.log(req.params.id)  
+  console.log(req.params.userId);
   try {
-    const cart = await Cart.find(req.params.userId);
-    
+    const cart = await Cart.find({ userId: req.params.userId });
     res.status(200).json(cart);
   } catch (err) {
+    console.error("Error fetching cart:", err);
     res.status(500).json(err);
   }
 });
